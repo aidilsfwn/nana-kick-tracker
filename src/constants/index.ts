@@ -1,0 +1,6 @@
+const LMP = new Date("2025-07-30");
+const DUE_DATE = new Date("2026-05-12");
+const QUICK_SUCCESSION_MS = 5000;
+const UNDO_TIMEOUT_MS = 5000;
+
+export { LMP, DUE_DATE, QUICK_SUCCESSION_MS, UNDO_TIMEOUT_MS };
