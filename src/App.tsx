@@ -1,11 +1,20 @@
 import { useState, useRef } from "react";
-import { History, Calendar, Clock } from "lucide-react";
+import { Calendar, Heart, Plus } from "lucide-react";
 import { toast } from "sonner";
 
-import { Card, CardContent, Button, Toaster, Skeleton } from "@/components/ui";
-import { HistoryModal, Loading, LogButton } from "@/components";
+import {
+  Card,
+  CardContent,
+  Button,
+  Toaster,
+  Skeleton,
+  Separator,
+} from "@/components/ui";
+import { HistoryTable, Loading } from "@/components";
 import { useKicks } from "@/hooks";
 import { calculateTimeInfo } from "@/utils";
+import { DUE_DATE } from "@/constants";
+import logo from "./assets/logo.svg";
 
 export interface DailySummary {
   date: string;
@@ -18,7 +27,6 @@ const App = () => {
 
   const { kicks, loading: appLoading, addKick, removeKick } = useKicks();
 
-  const [historyOpen, setHistoryOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { daysToGo, weeks, days } = calculateTimeInfo();
@@ -131,100 +139,91 @@ const App = () => {
   if (appLoading) return <Loading />;
 
   return (
-    <div className="safe-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-4 flex items-center justify-center overflow-hidden">
-      <div className="max-w-md w-full space-y-4">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-            Hi Farhana 👋
-          </h1>
-          <p className="text-gray-600 text-sm">Track your baby's kicks</p>
-        </div>
-
-        <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0">
-          <CardContent className="p-4">
-            <div className="flex flex-col items-center justify-center text-center space-y-2">
-              <div className="p-2 bg-pink-100 rounded-lg">
-                <Calendar className="w-4 h-4 text-pink-600" />
-              </div>
-              <h2 className="font-semibold text-gray-700 text-sm">Due Date</h2>
-              <p className="text-xl font-bold text-gray-900">
-                December 25, 2024
-              </p>
-              <div className="flex flex-col items-center gap-1 text-gray-600">
-                <span className="text-2xl font-bold text-pink-600">
-                  {daysToGo}
+    <div className="bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center overflow-hidden">
+      <div className="w-full space-y-4">
+        <div className="bg-white flex flex-col px-6 md:px-8 py-4 shadow-sm">
+          <div className="flex flex-row gap-4 items-center">
+            <img src={logo} alt="Loading" className="w-16 h-16" />
+            <div className="flex flex-col gap-1">
+              <span className="text-xl font-semibold">Nana's Kick Tracker</span>
+              <div className="flex flex-row gap-2 items-center">
+                <span className="italic text-sm text-neutral-400">
+                  Built with love, by yours truly
                 </span>
-                <span className="text-xs">days to go</span>
+                <Heart fill="#ff78ae" className="text-[#ff78ae] w-4 h-4" />
               </div>
-              <p className="text-xs text-gray-500">
-                {weeks} weeks, {days} days
-              </p>
             </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex justify-center">
-          <LogButton onClick={handleLogKick} loading={loading} />
+          </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0">
-            <CardContent className="p-4 flex flex-col items-center text-center">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 bg-purple-100 rounded">
-                  <Calendar className="w-3 h-3 text-purple-600" />
+        <div className="flex flex-col px-6 md:px-8 py-4 gap-6">
+          <div className="flex flex-col gap-1.5">
+            <h1 className="text-3xl font-bold">Hi Farhana 👋</h1>
+            <p className="text-gray-600 text-sm">Track your baby's kicks</p>
+          </div>
+          <Card className="shadow-md border-0">
+            <CardContent>
+              <div className="flex flex-col justify-center gap-2">
+                <div className="font-semibold text-gray-700 text-sm">
+                  Baby's Due Date:{" "}
+                  {DUE_DATE.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}{" "}
+                  (<span className="text-pink-600">{daysToGo}</span> days to go)
                 </div>
-                <span className="text-xs font-medium text-gray-600">Today</span>
+                <div className="font-semibold text-gray-700 text-sm">
+                  Fetal Age: {weeks} weeks{days > 0 ? `, ${days} days` : ""}
+                </div>
               </div>
-              {loading ? (
-                <Skeleton className="h-8 w-12 rounded" />
-              ) : (
-                <p className="text-3xl font-bold text-purple-600">
-                  {kicksToday}
-                </p>
-              )}
-              <p className="text-xs text-gray-500 mt-1">kicks</p>
+              <Separator className="my-6" />
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-row justify-center gap-2">
+                  <div className="p-1.5 bg-purple-100 rounded">
+                    <Calendar className="w-3 h-3 text-purple-600" />
+                  </div>
+                  <div className="font-semibold">Today's Stats</div>
+                </div>
+                <div className="flex flex-row gap-2">
+                  <div className="flex flex-1 flex-col gap-2 text-center">
+                    <div>Kicks </div>
+                    {loading ? (
+                      <Skeleton className="h-8 w-10 rounded self-center" />
+                    ) : (
+                      <div className="text-3xl font-bold text-purple-600">
+                        {kicksToday}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-1 flex-col gap-2 text-center">
+                    <div>Time to 10</div>
+                    {loading ? (
+                      <Skeleton className="h-8 w-10 rounded self-center" />
+                    ) : (
+                      <div className="text-3xl font-bold text-blue-600">
+                        {getTimeTo10Kicks() || "-"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <Button
+                  className="max-w-sm w-full self-center mt-2"
+                  onClick={handleLogKick}
+                  disabled={loading}
+                  size="lg"
+                >
+                  <Plus />
+                  Log Kick
+                </Button>
+              </div>
+              <Separator className="my-6" />
+              <div className="flex flex-col gap-3">
+                <div className="font-semibold">History</div>
+                <HistoryTable data={dailySummaries} />
+              </div>
             </CardContent>
           </Card>
-
-          {/* Time to 10 Kicks */}
-          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0">
-            <CardContent className="p-4 flex flex-col items-center text-center">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 bg-blue-100 rounded">
-                  <Clock className="w-3 h-3 text-blue-600" />
-                </div>
-                <span className="text-xs font-medium text-gray-600">
-                  Time to 10
-                </span>
-              </div>
-              {loading ? (
-                <Skeleton className="h-8 w-12 rounded" />
-              ) : (
-                <p className="text-3xl font-bold text-blue-600">
-                  {getTimeTo10Kicks() || "-"}
-                </p>
-              )}
-              <p className="text-xs text-gray-500 mt-1">
-                {getTimeTo10Kicks() ? "today" : "not yet"}
-              </p>
-            </CardContent>
-          </Card>
         </div>
-
-        <Button
-          className="w-full h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700"
-          onClick={() => setHistoryOpen(true)}
-        >
-          <History className="w-4 h-4" />
-          View Full History
-        </Button>
-
-        <HistoryModal
-          open={historyOpen}
-          setOpen={setHistoryOpen}
-          data={dailySummaries}
-        />
 
         <Toaster position="top-center" />
       </div>

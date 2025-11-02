@@ -15,7 +15,7 @@ export const LogButton = ({
       onClick={onClick}
       className="rounded-full w-36 h-36 bg-white hover:bg-neutral-100 shadow-md"
     >
-      <img src={logo} alt="Loading" className="w-24 h-24 " />
+      <img src={logo} alt="logo" className="w-24 h-24 " />
     </Button>
   );
 };

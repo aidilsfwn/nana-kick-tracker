@@ -4,3 +4,4 @@ export * from "./dialog";
 export * from "./skeleton";
 export * from "./sonner";
 export * from "./table";
+export * from "./separator";
